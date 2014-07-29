@@ -19,4 +19,11 @@ public class StringUtil {
 		return DigestUtils.md5Hex(is);
 	}
 
+	public static String[] split(String s) {
+		return split(s, ",");
+	}
+
+	public static String[] split(String s, String delimeter) {
+		return s.split(delimeter);
+	}
 }
