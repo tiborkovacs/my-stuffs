@@ -1,11 +1,14 @@
 package com.yg0r2.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 /**
  * @author Yg0R2
@@ -35,6 +38,16 @@ public class FileUtil {
 		throws IOException {
 
 		return new String(Files.readAllBytes(Paths.get(fileFullPath)));
+	}
+
+	public static String readZipFileEntryContent(
+		ZipFile zipFile, ZipEntry zipEntry) throws IOException {
+
+		ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+		InputStream is = zipFile.getInputStream(zipEntry);
+
+		return StringUtil.convertIsToString(is);
 	}
 
 	public static void unzipFile(InputStream is, OutputStream os)
