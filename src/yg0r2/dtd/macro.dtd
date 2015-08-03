@@ -1,0 +1,131 @@
+<!-- Attribute Entities -->
+<!ENTITY % actionAttribute 'action CDATA #IMPLIED'>
+<!ENTITY % argsAttributes
+	'arg1 CDATA #REQUIRED
+	 arg2 CDATA #REQUIRED'
+>
+<!ENTITY % locatorAttribute 'locator CDATA #IMPLIED'>
+<!ENTITY % locatorKeyAttribute 'locator-key CDATA #IMPLIED'>
+<!ENTITY % lpeAttribute 'lpe CDATA #IMPLIED'>
+<!ENTITY % macroAttribute 'macro CDATA #IMPLIED'>
+<!ENTITY % nameAttribute 'name NMTOKEN #REQUIRED'>
+<!ENTITY % valueAttribute 'value CDATA #IMPLIED'>
+<!ENTITY % valueKeyAttribute 'value-key CDATA #IMPLIED'>
+<!ENTITY % versionAttribute 'version CDATA #IMPLIED'>
+<!ENTITY % dependsOnAttributes
+	'condition CDATA #IMPLIED
+	 %lpeAttribute;
+	 %versionAttribute;'
+>
+
+<!-- Element Entities -->
+<!ENTITY % commandChildElements 'depends-on|echo|execute|for|if|return|var|while'>
+<!ENTITY % coditionChildElements 'and|condition|contains|equals|greater|greater-equals|isset|less|less-equals|not|or'>
+
+<!-- Elements -->
+<!ELEMENT and ((%coditionChildElements;), (%coditionChildElements;)+)>
+
+<!ELEMENT case ((%commandChildElements;)+)>
+<!ATTLIST case %dependsOnAttributes;>
+
+<!ELEMENT command ((%commandChildElements;)*)>
+<!ATTLIST command
+	%nameAttribute;
+	%versionAttribute;
+>
+
+<!ELEMENT condition EMPTY>
+<!ATTLIST condition
+	%actionAttribute;
+	%locatorAttribute;
+	%locatorKeyAttribute;
+	%valueAttribute;
+	%valueKeyAttribute;
+>
+
+<!ELEMENT contains EMPTY>
+<!ATTLIST contains
+	string CDATA #REQUIRED
+	substring CDATA #REQUIRED
+>
+
+<!ELEMENT default ((%commandChildElements;)+)>
+
+<!ELEMENT definition ((depends-on|command|static-command|var)+)>
+<!ATTLIST definition %versionAttribute;>
+
+<!ELEMENT depends-on (case+, default?)>
+
+<!ELEMENT echo EMPTY>
+<!ATTLIST echo message CDATA #REQUIRED>
+
+<!ELEMENT else ((%commandChildElements;)+)>
+
+<!ELEMENT elseif ((%coditionChildElements;)+, then, elseif*, else*)>
+
+<!ELEMENT equals EMPTY>
+<!ATTLIST equals %argsAttributes;>
+
+<!ELEMENT execute (var*)>
+<!ATTLIST execute
+	%actionAttribute;
+	%locatorAttribute;
+	%locatorKeyAttribute;
+	%macroAttribute;
+	%valueAttribute;
+	%valueKeyAttribute;
+>
+
+<!ELEMENT for (%commandChildElements;)+>
+<!ATTLIST for
+	list CDATA #REQUIRED
+	param NMTOKEN #REQUIRED
+>
+
+<!ELEMENT greater EMPTY>
+<!ATTLIST greater %argsAttributes;>
+
+<!ELEMENT greater-equals EMPTY>
+<!ATTLIST greater-equals %argsAttributes;>
+
+<!ELEMENT if ((%coditionChildElements;)+, then, elseif*, else*)>
+
+<!ELEMENT isset EMPTY>
+<!ATTLIST isset var CDATA #REQUIRED>
+
+<!ELEMENT less EMPTY>
+<!ATTLIST less %argsAttributes;>
+
+<!ELEMENT less-equals EMPTY>
+<!ATTLIST less-equals %argsAttributes;>
+
+<!ELEMENT not ((%coditionChildElements;)+)>
+
+<!ELEMENT or ((%coditionChildElements;), (%coditionChildElements;)+)>
+
+<!ELEMENT then ((%commandChildElements;)+)>
+
+<!ELEMENT return EMPTY>
+<!ATTLIST return
+	value CDATA #IMPLIED
+	void (true) #IMPLIED
+>
+
+<!ELEMENT static-command ((%commandChildElements;)*)>
+<!ATTLIST static-command
+	%nameAttribute;
+	%versionAttribute;
+>
+
+<!ELEMENT var (#PCDATA|var)*>
+<!ATTLIST var
+	%actionAttribute;
+	%locatorAttribute;
+	%locatorKeyAttribute;
+	%macroAttribute;
+	%nameAttribute;
+	unset (true) #IMPLIED
+	value CDATA #IMPLIED
+>
+
+<!ELEMENT while ((%coditionChildElements;), then)>

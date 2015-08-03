@@ -1,0 +1,179 @@
+<!DOCTYPE definition SYSTEM "macro.dtd">
+
+<definition>
+	<depends-on>
+		<case version="60x">
+			<var name="ddmFieldNames" value="Boolean Flag,Document Library,Image,Link to Page,Multi-Selection List,Selection List,Text,Text Area (HTML),Text Box" />
+
+			<var name="structure_document_libraryValue" value="${documentTitle}" />
+		</case>
+		<case version="61x">
+			<var name="ddmFieldNames" value="Boolean Flag,Documents and Media,Image,Link to Page,Multi-Selection List,Selection List,Text,Text Area (HTML),Text Box" />
+
+			<var name="structure_document_libraryValue" value="${documentTitle}" />
+		</case>
+		<default>
+			<var name="ddmFieldNames" value="Boolean,Date,Decimal,Documents and Media,HTML,Image,Integer,Link to Page,Number,Radio,Select,Text,Text Box" />
+
+			<var name="structure_documents_and_mediaValue" value="${documentTitle}" />
+		</default>
+	</depends-on>
+
+	<var name="dmDocumentType" value="Basic Document" />
+
+	<command name="openTree">
+		<var name="parentLocator" macro="this#-doOpenTree" />
+
+		<if>
+			<or>
+				<equals arg1="${clickOnLastElement}" arg2="true" />
+				<equals arg1="${selectLastElement}" arg2="true" />
+				<equals arg1="${selectLastWrappedElement}" arg2="true" />
+			</or>
+			<then>
+				<if>
+					<and>
+						<not>
+							<isset var="parentNames" />
+						</not>
+						<isset var="lastElementName" />
+						<isset var="lastElementLocator" />
+					</and>
+					<then>
+						<execute action="BaseLiferay#click" locator="${lastElementLocator}" />
+					</then>
+					<elseif>
+						<and>
+							<not>
+								<isset var="parentNames" />
+							</not>
+							<not>
+								<isset var="lastElementName" />
+							</not>
+						</and>
+						<then>
+							<return void="true" />
+						</then>
+					</elseif>
+					<else>
+						<if>
+							<isset var="lastElementName" />
+							<then>
+								<var name="parentLocator" value="${parentLocator}/ul/li[div[contains(.,'${lastElementName}')]]" />
+							</then>
+						</if>
+
+						<if>
+							<equals arg1="${selectLastElement}" arg2="true" />
+							<then>
+								<depends-on>
+									<case version="60x OR 61x">
+										<execute action="BaseLiferay#check" locator="${parentLocator}/div/div[input]" />
+									</case>
+									<default>
+										<execute action="BaseLiferay#check" locator="${parentLocator}/div/i[input]" />
+									</default>
+								</depends-on>
+							</then>
+							<else>
+								<execute action="BaseLiferay#click" locator="${parentLocator}/div" />
+							</else>
+						</if>
+					</else>
+				</if>
+			</then>
+		</if>
+	</command>
+
+	<command name="assertCheckIfIssetAndTrue">
+		<var name="alma" value="alma" />
+		<var name="alma" action="BaseLiferay#assert" locator="//body" />
+		<var name="alma" action="BaseLiferay#assert" locator-key="ALMA" />
+		<var name="alma" macro="BaseLiferay#commandName" />
+		<var name="alma" value="${subAlma}">
+			<var name="subAlma" value="alma" />
+		</var>
+
+		<for list="${childNames}" param="childName">
+			<var name="childLocator" value="${parentLocator}/ul/li[div[contains(.,'${childName}')]]" />
+
+			<if>
+				<equals arg1="${childNotPresent}" arg2="true" />
+				<then>
+					<execute action="BaseLiferay#assertElementNotPresent" locator-key="${childLocator}" />
+				</then>
+				<else>
+					<execute action="BaseLiferay#assertElementPresent" locator-key="${childLocator}" />
+				</else>
+			</if>
+		</for>
+
+		<if>
+			<or>
+				<equals arg1="${addWithCategory}" arg2="true" />
+				<equals arg1="${addWithTag}" arg2="true" />
+			</or>
+			<then>
+				<depends-on>
+					<case version="60x">
+						<execute macro="this#openContainer">
+							<var name="collapseButtonLocator" action="WCArticleCP#getxPathLocation" locator-key="CATEGORIZATION_COLLAPSE_BUTTON" />
+							<var name="containerLocator" action="WCArticleCP#getxPathLocation" locator-key="CATEGORIZATION_CONTAINER" />
+							<var name="expandButtonLocator" action="WCArticleCP#getxPathLocation" locator-key="CATEGORIZATION_EXPAND_BUTTON" />
+						</execute>
+					</case>
+					<default>
+						<execute action="WCArticleCP#click" locator-key="WEB_CONTENT_ARTICLE_CATEGORIZATION_LINK" />
+					</default>
+				</depends-on>
+			</then>
+		</if>
+
+		<while>
+			<and>
+				<less-equals arg1="${waitCounter}" arg2="3" />
+				<not>
+					<equals arg1="${editorPresent}" arg2="true" />
+				</not>
+			</and>
+			<then>
+				<var name="waitCounter" value="${waitCounter?increment(1)}" />
+
+				<if>
+					<condition action="BaseLiferay#isElementPresent" locator-key="CKEDITOR_CONTAINER" />
+					<then>
+						<execute action="BaseLiferay#type" locator="${ckeditorLocator}" value="${content}" />
+
+						<var name="editorPresent" value="true" />
+					</then>
+					<else>
+						<execute action="BaseLiferay#pause" locator="5000" />
+					</else>
+				</if>
+			</then>
+		</while>
+
+		<if>
+			<not>
+				<isset var="" />
+			</not>
+			<then>
+				<echo message="" />
+			</then>
+			<elseif>
+				<isset var="" />
+				<then>
+					<echo message="" />
+				</then>
+				<else>
+					<echo message="" />
+				</else>
+			</elseif>
+			<else>
+				<echo message="" />
+			</else>
+		</if>
+
+		<echo message="" />
+	</command>
+</definition>

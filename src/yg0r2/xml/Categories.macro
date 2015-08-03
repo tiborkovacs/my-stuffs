@@ -1,0 +1,78 @@
+<definition>
+	<var name="categoryName" value="Category Name" />
+	<var name="categoryDescription" value="Category Description" />
+
+	<var name="categoryEditedName" value="Category Edited Name" />
+	<var name="categoryEditedDescription" value="Category Edited Description" />
+
+	<var name="vocabularyName" value="Vocabulary Name" />
+	<var name="vocabularyDescription" value="Vocabulary Description" />
+
+	<var name="vocabularyEditedName" value="Vocabulary Edited Name" />
+	<var name="vocabularyEditedDescription" value="Vocabulary Edited Description" />
+
+	<command name="doAssertCategorySelected">
+		<if>
+			<equals arg1="${configureAssetPublisherFilter}" arg2="true" />
+			<then>
+				<var name="filterQueryListRowLocator" action="AssetPublisherPG#getxPathLocation" locator-key="FILTER_QUERY_LIST_ROW" />
+				<var name="addedCategoryLocator" action="Categories#getxPathLocation" locator-key="ADDED_CATEGORY_LIST_ROW" />
+
+				<execute action="Categories#assertElementPresent" locator="${filterQueryListRowLocator}//*${addedCategoryLocator}" />
+			</then>
+			<else>
+				<execute action="Categories#assertElementPresent" locator-key="ADDED_CATEGORY_LIST_ROW" />
+			</else>
+		</if>
+	</command>
+
+	<command name="doSelectCategory">
+		<if>
+			<equals arg1="${configureAssetPublisherFilter}" arg2="true" />
+			<then>
+				<execute action="AssetPublisherPG#click" locator-key="CATEGORY_SELECT_BUTTON" />
+			</then>
+			<else>
+				<execute action="Categories#click" locator-key="CATEGORY_SELECT_BUTTON" />
+			</else>
+		</if>
+
+		<execute action="Categories#waitForVisible" locator-key="CATEGORY_SELECT_POPUP" />
+
+		<execute action="Categories#type" locator-key="CATEGORY_SELECT_SEARCH_FIELD" value="${categoryName}" />
+
+		<depends-on>
+			<case version="60x">
+				<execute action="Categories#click" locator-key="CATEGORY_SELECT_CHECKBOX_WRAPPER" />
+
+				<execute action="Categories#assertChecked" locator-key="CATEGORY_SELECT_CHECKBOX" />
+			</case>
+			<case version="6110">
+				<if>
+					<equals arg1="${configureAssetPublisherFilter}" arg2="true" />
+					<then>
+						<execute action="Categories#click" locator="//ul/li/div[div[text()='${categoryName}']]/div[2]" />
+
+						<execute action="Categories#assertChecked" locator="//ul/li/div[div[text()='${categoryName}']]//input" />
+					</then>
+					<else>
+						<execute action="Categories#check" locator-key="CATEGORY_SELECT_CHECKBOX" />
+					</else>
+				</if>
+			</case>
+			<default>
+				<execute action="Categories#check" locator-key="CATEGORY_SELECT_CHECKBOX" />
+			</default>
+		</depends-on>
+
+		<execute action="Categories#click" locator-key="CLOSE_CATEGORY_SELECT_DIALOG_BUTTON" />
+
+		<execute macro="this#doAssertCategorySelected" />
+	</command>
+
+	<command name="+gotoPortletCP">
+		<execute macro="PagePG#gotoContentCP" />
+
+		<execute action="CategoriesCP#click" locator-key="CP_CATEGORIES_LINK" />
+	</command>
+</definition>
